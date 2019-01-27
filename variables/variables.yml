@@ -1,0 +1,8 @@
+---
+  telegraf_url: https://dl.influxdata.com/telegraf/releases/telegraf-1.9.2-1.x86_64.rpm
+  influx_url: https://dl.influxdata.com/influxdb/releases/influxdb-1.7.2.x86_64.rpm
+  grafana_url: https://dl.grafana.com/oss/release/grafana-5.4.3-1.x86_64.rpm
+  metric_storage_ip:
+  jar_location: ~/environment/201360/FinalADSK/app/rentalapp-0.0.1-SNAPSHOT.jar
+  app_location: /opt/carrental/
+  epel_url: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm

@@ -1,0 +1,15 @@
+---
+- include_vars:
+    file: ../variables/variables.yml
+- name: "Install telegraf"
+  yum:
+    name: "{{ telegraf_url }}"
+    state: present
+- name: "move over telegraf template"
+  template:
+    src: templates/telegraf_nginx.conf
+    dest: /etc/telegraf/telegraf.conf
+- name: "restart telegraf"
+  service:
+    name: telegraf
+    state: restarted

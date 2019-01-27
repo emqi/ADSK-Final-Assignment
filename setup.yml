@@ -1,0 +1,17 @@
+---
+- hosts: proxy_server
+  become: yes
+  tasks:
+    - include_tasks: proxy/setup_proxy.yml
+- hosts: stats
+  become: yes
+  tasks:
+    - include_tasks: metric/setup_metric.yml
+- hosts: app
+  tasks:
+    - include_tasks: app/setup_app.yml
+  become: yes
+- hosts: proxy_server
+  tasks:
+    - include_tasks: metric/setup_metric_nginx.yml
+  become: yes

@@ -1,0 +1,54 @@
+---
+- include vars:
+    file: ../variables/variables.yml
+- hosts: stats
+  become: yes
+  tasks:
+    - name: "Install htop"
+      yum:
+        name: htop
+        state: present
+    - name: "Install telegraf"
+      yum:
+        name: "{{ telegraf_url }}"
+        state: present
+    - name: "put cfg into path"
+      copy:
+        src: templates/telegraf.conf
+        dest: /etc/telegraf/telegraf.conf
+    - name: "restart telegraf"
+      service:
+        name: telegraf
+        state: restarted
+    - name: "install influxdb"
+      yum:
+        name: "{{influx_url}}"
+        state: present
+    - name: "start influxdb"
+      service:
+        name: influxdb
+        state: started
+    - name: "Install Grafana"
+    - yum:
+        name: "{{grafana_url}}"
+        state: present
+    - name: "Prepare Grafana"
+      template:
+        src: templates/grafana.ini
+        dest: /etc/grafana/grafana.ini
+    - service:
+        name: "grafana-server"
+        state: started
+    - name: "Prepare influxdb"
+      grafana datasource:
+        name: "my-influx"
+        grafana_url: "http://127.0.0.1:8081"
+        grafana_user: "admin"
+        grafana_password: "admin"
+        org_id: "1"
+        ds_type: "influxdb"
+        url: "http://{{ metric_storage_ip }}:8086"
+        database: "metrics"
+    - service:
+      name: influxdb
+      state: restarted

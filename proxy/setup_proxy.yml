@@ -1,8 +1,6 @@
 ---
-- hosts: proxy_server
-  become: yes
-  vars:
-    epel_url: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+- include vars:
+    file: ../variables/variables.yml
   tasks:
     - name: "install exta packages repo"
       yum:
@@ -10,8 +8,12 @@
         state: present
     - name: "install nginx"
       yum:
-        name: "nginx"
+        name: nginx
         state: present
+    - name: "stop nginx"
+      service:
+        name: nginx
+        state: stopped
     - name: "prepare letsencrypt directory"
       file:
         name: /var/www/letsencrypt
@@ -20,11 +22,40 @@
       file:
         name: /etc/nginx/sites-enabled
         state: directory
-    - name: "place app cfg int place"
+    - name: "place app cfg in place"
       template:
-        src: application.conf
+        src: templates/application.conf
         dest: /etc/nginx/conf.d/application.conf
-    - name: "start nginx service"
+    - name: "place nginx cfg in place"
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+    - name: "nginx for letsencrypt setup"
+      template:
+        src: templates/nginx-http.j2
+        dest: /etc/nginx/sites-enabled/http
+    - name: "Install python"
+      yum:
+        name: python3
+        state: present
+    - name: "install certbot dependencies"
+      shell: pip3 install cryptography
+      shell: pip3 install certbot-nginx
+    - name: "restart nginx service"
       service:
-        name: "nginx"
+        name: nginx
         state: restarted
+    - name: Create letsencrypt certificate
+      shell: /usr/local/bin/certbot  certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}
+      args:
+        creates: /etc/letsencrypt/live/{{ domain_name }}
+    - name: Generate dhparams
+      shell: openssl dhparam -out /etc/nginx/dhparams.pem 2048
+      args:
+        creates: /etc/nginx/dhparams.pem
+    - name: "Install nginx site for your site"
+      template:
+        src: ../templates/nginx-le.j2
+        dest: /etc/nginx/sites-enabled/le
+    - name: "nginx reload"
+      service: name=nginx state=restarted

@@ -1,0 +1,26 @@
+---
+- include_vars:
+    file: ../variables/variables.yml
+- name: "install jre"
+  yum:
+    name: java-1.8.0-openjdk
+    state: present
+- name: "create path"
+  file:
+    path: /opt/carrental
+    state: directory
+- name: "copy .jar to remote machine"
+  copy:
+    src: "{{jar_location}}"
+    dest: "{{app_location}}"
+- name: "copy systemd config"
+  template:
+    src: ../templates/rental.service
+    dest: /etc/systemd/system/rental.service
+- name: "reload service"
+  systemd:
+    daemon_reload: yes
+- name: "start app"
+  service:
+    name: rental
+    state: restarted
