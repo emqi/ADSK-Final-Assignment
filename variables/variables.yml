@@ -5,4 +5,5 @@
   metric_storage_ip:
   jar_location: ~/environment/201360/FinalADSK/app/rentalapp-0.0.1-SNAPSHOT.jar
   app_location: /opt/carrental/
+  app_user: doopek
   epel_url: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm

@@ -1,7 +1,6 @@
 ---
-- include vars:
-    file: ../variables/variables.yml
-  tasks:
+    - include_vars:
+        file: ../variables/variables.yml
     - name: "install exta packages repo"
       yum:
         name: "{{ epel_url}}"
@@ -9,7 +8,7 @@
     - name: "install nginx"
       yum:
         name: nginx
-        state: present
+        state: latest
     - name: "stop nginx"
       service:
         name: nginx
@@ -22,10 +21,6 @@
       file:
         name: /etc/nginx/sites-enabled
         state: directory
-    - name: "place app cfg in place"
-      template:
-        src: templates/application.conf
-        dest: /etc/nginx/conf.d/application.conf
     - name: "place nginx cfg in place"
       template:
         src: templates/nginx.conf.j2
@@ -38,8 +33,9 @@
       yum:
         name: python3
         state: present
-    - name: "install certbot dependencies"
+    - name: "install certbot dependencies (1)"
       shell: pip3 install cryptography
+    - name: "install certbot dependencies (1)"
       shell: pip3 install certbot-nginx
     - name: "restart nginx service"
       service:
@@ -58,4 +54,6 @@
         src: ../templates/nginx-le.j2
         dest: /etc/nginx/sites-enabled/le
     - name: "nginx reload"
-      service: name=nginx state=restarted
+      service: 
+        name: nginx 
+        state: restarted

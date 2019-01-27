@@ -1,9 +1,6 @@
 ---
-- include vars:
-    file: ../variables/variables.yml
-- hosts: stats
-  become: yes
-  tasks:
+    - include_vars:
+         file: ../variables/variables.yml
     - name: "Install htop"
       yum:
         name: htop
@@ -29,7 +26,7 @@
         name: influxdb
         state: started
     - name: "Install Grafana"
-    - yum:
+      yum:
         name: "{{grafana_url}}"
         state: present
     - name: "Prepare Grafana"
@@ -40,7 +37,7 @@
         name: "grafana-server"
         state: started
     - name: "Prepare influxdb"
-      grafana datasource:
+      grafana_datasource:
         name: "my-influx"
         grafana_url: "http://127.0.0.1:8081"
         grafana_user: "admin"
@@ -49,6 +46,7 @@
         ds_type: "influxdb"
         url: "http://{{ metric_storage_ip }}:8086"
         database: "metrics"
-    - service:
-      name: influxdb
-      state: restarted
+    - name: "restart influxdb"
+      service:
+        name: influxdb
+        state: restarted
