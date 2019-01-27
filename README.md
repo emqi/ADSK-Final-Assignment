@@ -1,0 +1,1 @@
+Car rental ansible setup w/ automatic letsencrypt certification, balanced load and grafana support. Sadly does not work at the moment (502 http error) :()

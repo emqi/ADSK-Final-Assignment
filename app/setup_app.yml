@@ -15,7 +15,7 @@
     dest: "{{app_location}}"
 - name: "copy systemd config"
   template:
-    src: ../templates/rental.service
+    src: templates/rental.service
     dest: /etc/systemd/system/rental.service
 - name: "reload service"
   systemd:
