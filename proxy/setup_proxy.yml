@@ -12,9 +12,17 @@
       yum:
         name: "nginx"
         state: present
+    - name: "prepare letsencrypt directory"
+      file:
+        name: /var/www/letsencrypt
+        state: directory
+    - name: "prepare sites-enabled directory"
+      file:
+        name: /etc/nginx/sites-enabled
+        state: directory
     - name: "place app cfg int place"
       template:
-        src: templates/application.conf
+        src: application.conf
         dest: /etc/nginx/conf.d/application.conf
     - name: "start nginx service"
       service:
